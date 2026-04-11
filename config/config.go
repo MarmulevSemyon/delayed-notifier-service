@@ -12,6 +12,8 @@ type Config struct {
 	Postgres PostgresConfig
 	RabbitMQ RabbitMQConfig
 	Redis    RedisConfig
+
+	Telegram TelegramConfig
 }
 
 type PostgresConfig struct {
@@ -30,6 +32,10 @@ type RedisConfig struct {
 	Addr     string
 	Password string
 	DB       int
+}
+
+type TelegramConfig struct {
+	BotToken string
 }
 
 func Load() (*Config, error) {
@@ -61,6 +67,9 @@ func Load() (*Config, error) {
 			Addr:     cfg.GetString("REDIS_ADDR"),
 			Password: cfg.GetString("REDIS_PASSWORD"),
 			DB:       cfg.GetInt("REDIS_DB"),
+		},
+		Telegram: TelegramConfig{
+			BotToken: cfg.GetString("TG_BOT_TOKEN"),
 		},
 	}
 

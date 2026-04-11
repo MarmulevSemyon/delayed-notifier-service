@@ -10,3 +10,5 @@ RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
 REDIS_ADDR=redis:6379
 REDIS_PASSWORD=
 REDIS_DB=0
+
+TG_BOT_TOKEN=ваш_токен

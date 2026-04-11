@@ -58,12 +58,18 @@ func main() {
 
 	// хранилище
 	repo := repository.New(db)
-	// отправитель
-	snd := sender.New()
+	// mock отправитель
+	mockSender := sender.NewMockSender()
+	// tg отправитель
+	telegramSender, err := sender.NewTelegramSender(cfg.Telegram.BotToken)
+	if err != nil {
+		log.Fatalf("telegram sender init error: %v", err)
+	}
 
-	// консьюмер
+	senderRouter := sender.NewRouter(mockSender, telegramSender)
+
 	go func() {
-		if err := q.StartConsumer(context.Background(), repo, snd, c); err != nil {
+		if err := q.StartConsumer(context.Background(), repo, senderRouter, c); err != nil {
 			log.Printf("consumer stopped: %v", err)
 		}
 	}()

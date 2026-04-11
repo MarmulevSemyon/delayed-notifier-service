@@ -10,7 +10,11 @@
       margin: 30px auto;
       padding: 0 16px;
     }
-    h1 { margin-bottom: 20px; }
+
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+
     form {
       display: grid;
       gap: 10px;
@@ -19,35 +23,99 @@
       border: 1px solid #ccc;
       border-radius: 10px;
     }
-    input, select, button {
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select, button, textarea {
       padding: 10px;
       font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
+
+    small {
+      color: #555;
+      margin-top: -4px;
+      display: block;
+    }
+
     .card {
       border: 1px solid #ddd;
       border-radius: 10px;
       padding: 12px;
       margin-bottom: 12px;
     }
+
     .row {
       margin: 4px 0;
     }
+
     .status {
       font-weight: bold;
+    }
+
+    .status.pending {
+      color: #996c00;
+    }
+
+    .status.processing {
+      color: #0057b8;
+    }
+
+    .status.sent {
+      color: #0a7d18;
+    }
+
+    .status.failed {
+      color: #b30000;
+    }
+
+    .status.canceled {
+      color: #666;
+    }
+
+    .actions {
+      margin-top: 10px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .top-note {
+      margin-bottom: 16px;
+      color: #444;
     }
   </style>
 </head>
 <body>
   <h1>Delayed Notifier</h1>
 
+  <p class="top-note">
+    Для канала <b>mock</b> в поле получателя можно писать любой текст.
+    Для канала <b>telegram</b> в поле получателя нужно указать <b>chat_id</b>.
+  </p>
+
   <form id="notifyForm">
+    <label for="channel">Канал</label>
     <select id="channel">
       <option value="mock">mock</option>
+      <option value="telegram">telegram</option>
     </select>
 
+    <label for="recipient">Получатель</label>
     <input id="recipient" placeholder="Получатель" required />
-    <input id="message" placeholder="Сообщение" required />
+    <small id="recipientHint">Для mock можно указать любой текст.</small>
+
+    <label for="message">Сообщение</label>
+    <textarea id="message" placeholder="Сообщение" rows="3" required></textarea>
+
+    <label for="sendAt">Время отправки</label>
     <input id="sendAt" type="datetime-local" required />
+
+    <label for="maxAttempts">Максимум попыток</label>
     <input id="maxAttempts" type="number" min="1" value="3" required />
 
     <button type="submit">Создать уведомление</button>
@@ -57,6 +125,20 @@
   <div id="notifications"></div>
 
   <script>
+    const channelEl = document.getElementById('channel');
+    const recipientEl = document.getElementById('recipient');
+    const recipientHintEl = document.getElementById('recipientHint');
+
+    function updateRecipientHint() {
+      if (channelEl.value === 'telegram') {
+        recipientEl.placeholder = 'chat_id Telegram';
+        recipientHintEl.textContent = 'Сначала напиши боту, потом возьми chat_id через getUpdates.';
+      } else {
+        recipientEl.placeholder = 'Получатель';
+        recipientHintEl.textContent = 'Для mock можно указать любой текст.';
+      }
+    }
+
     async function loadNotifications() {
       const res = await fetch('/notifications');
       const data = await res.json();
@@ -68,18 +150,21 @@
         const div = document.createElement('div');
         div.className = 'card';
 
+        const statusClass = (n.status || '').toLowerCase();
+
         div.innerHTML = `
           <div class="row"><b>ID:</b> ${n.id}</div>
           <div class="row"><b>Канал:</b> ${n.channel}</div>
           <div class="row"><b>Получатель:</b> ${n.recipient}</div>
           <div class="row"><b>Сообщение:</b> ${n.message}</div>
           <div class="row"><b>Время отправки:</b> ${n.send_at}</div>
-          <div class="row"><b>Статус:</b> <span class="status">${n.status}</span></div>
+          <div class="row"><b>Статус:</b> <span class="status ${statusClass}">${n.status}</span></div>
           <div class="row"><b>Попытки:</b> ${n.attempts} / ${n.max_attempts}</div>
           <div class="row"><b>Ошибка:</b> ${n.last_error ?? '-'}</div>
-          ${n.status === 'pending' || n.status === 'processing'
-            ? `<button onclick="cancelNotification(${n.id})">Отменить</button>`
-            : ''
+          ${
+            n.status === 'pending' || n.status === 'processing'
+              ? `<div class="actions"><button onclick="cancelNotification(${n.id})">Отменить</button></div>`
+              : ''
           }
         `;
 
@@ -88,7 +173,14 @@
     }
 
     async function cancelNotification(id) {
-      await fetch(`/notify/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/notify/${id}`, { method: 'DELETE' });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Не удалось отменить уведомление');
+        return;
+      }
+
       loadNotifications();
     }
 
@@ -100,8 +192,8 @@
 
       const payload = {
         channel: document.getElementById('channel').value,
-        recipient: document.getElementById('recipient').value,
-        message: document.getElementById('message').value,
+        recipient: document.getElementById('recipient').value.trim(),
+        message: document.getElementById('message').value.trim(),
         send_at: sendAt,
         max_attempts: Number(document.getElementById('maxAttempts').value)
       };
@@ -120,9 +212,14 @@
 
       document.getElementById('notifyForm').reset();
       document.getElementById('maxAttempts').value = 3;
+      document.getElementById('channel').value = 'mock';
+      updateRecipientHint();
       loadNotifications();
     });
 
+    channelEl.addEventListener('change', updateRecipientHint);
+
+    updateRecipientHint();
     loadNotifications();
     setInterval(loadNotifications, 5000);
   </script>

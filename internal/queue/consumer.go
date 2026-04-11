@@ -28,7 +28,7 @@ func strPtr(s string) *string {
 func (q *Queue) StartConsumer(
 	ctx context.Context,
 	repo *repository.Repository,
-	s *sender.Sender,
+	s sender.Sender,
 	cache *cache.Cache,
 ) error {
 	log.Println("consumer started")
