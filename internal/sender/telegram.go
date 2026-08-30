@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"delayedNotifier/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
