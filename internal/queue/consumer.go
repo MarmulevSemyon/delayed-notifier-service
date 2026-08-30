@@ -7,10 +7,10 @@ import (
 	"log"
 	"time"
 
-	"delayedNotifier/internal/cache"
-	"delayedNotifier/internal/model"
-	"delayedNotifier/internal/repository"
-	"delayedNotifier/internal/sender"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/cache"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/repository"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/sender"
 
 	"github.com/rabbitmq/amqp091-go"
 	"github.com/wb-go/wbf/rabbitmq"

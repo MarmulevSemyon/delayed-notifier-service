@@ -2,9 +2,10 @@ package repository
 
 import (
 	"database/sql"
-	"delayedNotifier/internal/model"
 	"errors"
 	"fmt"
+
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 
 	"github.com/wb-go/wbf/dbpg"
 )

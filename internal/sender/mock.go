@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"delayedNotifier/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 )
 
 type MockSender struct{}

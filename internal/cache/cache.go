@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"delayedNotifier/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 
 	"github.com/wb-go/wbf/redis"
 )

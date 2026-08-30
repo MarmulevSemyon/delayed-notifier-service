@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"delayedNotifier/internal/model"
-	"delayedNotifier/internal/repository"
-	"delayedNotifier/internal/service"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/repository"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/service"
 
 	"github.com/wb-go/wbf/ginext"
 )

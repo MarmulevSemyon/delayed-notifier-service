@@ -1,7 +1,7 @@
 package sender
 
 import (
-	"delayedNotifier/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 )
 
 type Sender interface {

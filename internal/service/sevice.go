@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"delayedNotifier/internal/cache"
-	"delayedNotifier/internal/model"
-	"delayedNotifier/internal/queue"
-	"delayedNotifier/internal/repository"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/cache"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/queue"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/repository"
 )
 
 type Service struct {

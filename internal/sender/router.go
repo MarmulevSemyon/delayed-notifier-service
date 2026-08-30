@@ -3,7 +3,7 @@ package sender
 import (
 	"fmt"
 
-	"delayedNotifier/internal/model"
+	"github.com/MarmulevSemyon/delayed-notifier-service/internal/model"
 )
 
 type Router struct {
